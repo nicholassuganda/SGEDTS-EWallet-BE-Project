@@ -4,7 +4,7 @@ import com.springboot.ewallet.entity.User;
 import com.springboot.ewallet.exception.APIException;
 import com.springboot.ewallet.payload.AddKtpDto;
 import com.springboot.ewallet.payload.ChangePasswordDto;
-import com.springboot.ewallet.payload.SignUpDto;
+import com.springboot.ewallet.payload.RegistrationDto;
 import com.springboot.ewallet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceImpl {
     private final UserRepository userRepository;
 
-    public String register(SignUpDto registerDto) {
+    public String register(RegistrationDto registerDto) {
 
         // add check for username exists in database
         if(userRepository.existsByUsername(registerDto.getUsername())){

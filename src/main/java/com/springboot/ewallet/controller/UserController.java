@@ -26,24 +26,24 @@ public class UserController {
     private ModelMapper modelMapper;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto) {
+    public ResponseEntity<?> registerUser(@RequestBody RegistrationDto registrationDto) {
 
         // add check for username exists in a DB
-        if (userRepository.existsByUsername(signUpDto.getUsername())) {
+        if (userRepository.existsByUsername(registrationDto.getUsername())) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
 
         // add check for email exists in DB
-        if (userRepository.existsByEmail(signUpDto.getEmail())) {
+        if (userRepository.existsByEmail(registrationDto.getEmail())) {
             return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
 
         // create user object
         User user = new User();
-        user.setName(signUpDto.getName());
-        user.setUsername(signUpDto.getUsername());
-        user.setEmail(signUpDto.getEmail());
-        user.setPassword(signUpDto.getPassword());
+        user.setName(registrationDto.getName());
+        user.setUsername(registrationDto.getUsername());
+        user.setEmail(registrationDto.getEmail());
+        user.setPassword(registrationDto.getPassword());
         user.setBalance(0L);
         user.setTransactionLimit(AppConstants.MAX_TRANSACTION_AMOUNT);
 

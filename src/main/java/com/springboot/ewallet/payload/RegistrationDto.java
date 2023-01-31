@@ -3,7 +3,7 @@ package com.springboot.ewallet.payload;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class SignUpDto {
+public class RegistrationDto {
     private String name;
     private String username;
     private String email;
@@ -12,7 +12,7 @@ public class SignUpDto {
     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{10,}$")
     private String password;
 
-    public SignUpDto() {
+    public RegistrationDto() {
     }
 
     public String getName() {
@@ -49,8 +49,8 @@ public class SignUpDto {
 
     public boolean equals(final Object o) {
         if (o == this) return true;
-        if (!(o instanceof SignUpDto)) return false;
-        final SignUpDto other = (SignUpDto) o;
+        if (!(o instanceof RegistrationDto)) return false;
+        final RegistrationDto other = (RegistrationDto) o;
         if (!other.canEqual((Object) this)) return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
@@ -68,7 +68,7 @@ public class SignUpDto {
     }
 
     protected boolean canEqual(final Object other) {
-        return other instanceof SignUpDto;
+        return other instanceof RegistrationDto;
     }
 
     public int hashCode() {
@@ -86,6 +86,6 @@ public class SignUpDto {
     }
 
     public String toString() {
-        return "SignUpDto(name=" + this.getName() + ", username=" + this.getUsername() + ", email=" + this.getEmail() + ", password=" + this.getPassword() + ")";
+        return "RegistrationDto(name=" + this.getName() + ", username=" + this.getUsername() + ", email=" + this.getEmail() + ", password=" + this.getPassword() + ")";
     }
 }
