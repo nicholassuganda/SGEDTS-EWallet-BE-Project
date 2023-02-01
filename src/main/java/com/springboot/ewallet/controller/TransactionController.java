@@ -1,5 +1,6 @@
 package com.springboot.ewallet.controller;
 
+import com.smattme.requestvalidator.RequestValidator;
 import com.springboot.ewallet.entity.User;
 import com.springboot.ewallet.payload.*;
 import com.springboot.ewallet.repository.TransactionRepository;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/transaction")
@@ -73,6 +77,17 @@ public class TransactionController {
         User user = userRepository.findByUsername(createTransactionDto.getUsername());
         User userrecipient = userRepository.findByUsername(createTransactionDto.getDestinationUsername());
         int passwordattempt = user.getPassword_attempt();
+
+        Map<String, String> rules = new HashMap<>();
+        rules.put("origin_Username", "required|origin_Username");
+        rules.put("destination_Username", "required|destination_Username");
+        rules.put("password", "required|password");
+        rules.put("amount", "required");
+
+        List<String> errors = RequestValidator.validate(createTransactionDto, rules);
+        if(!errors.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Format invalid " + errors.toString());
+        }
 
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Sender not found!");
