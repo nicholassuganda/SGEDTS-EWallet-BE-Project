@@ -11,11 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
-
+    private final static String PASSWORD_PATTERN =  "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{10,}$";
     @Autowired
     private UserRepository userRepository;
 
@@ -38,6 +40,10 @@ public class UserController {
             return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
 
+        if(registrationDto.getPassword() != PASSWORD_PATTERN){
+            return new ResponseEntity<>("Password format invalid!", HttpStatus.BAD_REQUEST);
+        }
+
         // create user object
         User user = new User();
         user.setName(registrationDto.getName());
@@ -55,6 +61,16 @@ public class UserController {
 
     @PostMapping("/changepassword")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto changePasswordDto){
+        User user = userRepository.findByUsername(changePasswordDto.getUsername());
+        if (!userRepository.existsByUsername(changePasswordDto.getUsername())) {
+            return new ResponseEntity<>("User not found!", HttpStatus.BAD_REQUEST);
+        }
+        if (changePasswordDto.getOldPassword() != user.getPassword()){
+            return new ResponseEntity<>("Old password wrong!", HttpStatus.BAD_REQUEST);
+        }
+        if(!Objects.equals(changePasswordDto.getNewPassword(), PASSWORD_PATTERN)){
+            return new ResponseEntity<>("Password format invalid!", HttpStatus.BAD_REQUEST);
+        }
         authService.changepassword(changePasswordDto);
         return new ResponseEntity<>("Password Changed Successfully!", HttpStatus.OK);
     }
@@ -67,14 +83,19 @@ public class UserController {
     }
 
     @GetMapping("/{username}/getbalance")
-    public ResponseEntity<GetBalanceDto> getbalance(@PathVariable String username){
+    public ResponseEntity<?> getbalance(@PathVariable String username){
         User user = authService.getbalance(username);
+
         GetBalanceDto getBalanceDto = modelMapper.map(user,GetBalanceDto.class);
         return ResponseEntity.ok().body(getBalanceDto);
     }
 
     @PutMapping("/{username}/addktp")
     public ResponseEntity<?> addKtp(@PathVariable String username, @RequestBody AddKtpDto addKtpDto) {
+
+        if (!userRepository.existsByUsername(addKtpDto.getKtp())) {
+            return new ResponseEntity<>("User not found!", HttpStatus.BAD_REQUEST);
+        }
 
         if (userRepository.existsByKtp(addKtpDto.getKtp())) {
             return new ResponseEntity<>("Ktp is already taken by other user!", HttpStatus.BAD_REQUEST);
